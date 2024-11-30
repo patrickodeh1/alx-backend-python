@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-"""test"""
+"""
+test suite for utils.py
+"""
 import unittest
 from parameterized import parameterized
 from typing import Mapping, Sequence, Any
@@ -35,16 +37,16 @@ class TestAccessNestedMap(unittest.TestCase):
 
 class TestGetJson(unittest.TestCase):
     """Test suite for the get_json function"""
-    
+
     @patch('utils.requests.get')
     def test_get_json(self, mock_get):
         """Test that get_json returns the expected result"""
-        
+
         test_cases = [
             ("http://example.com", {"payload": True}),
             ("http://holberton.io", {"payload": False}),
         ]
-        
+
         for test_url, test_payload in test_cases:
             mock_response = Mock()
             mock_response.json.return_value = test_payload
@@ -77,7 +79,8 @@ class TestMemoize(unittest.TestCase):
                 """A property decorated with memoize"""
                 return self.a_method()
 
-        with patch.object(TestClass, 'a_method', return_value=42) as mock_method:
+        with patch.object(TestClass, 'a_method', return_value=42) \
+                as mock_method:
             test_instance = TestClass()
 
             # Call the memoized property twice
