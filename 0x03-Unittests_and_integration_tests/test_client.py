@@ -52,7 +52,9 @@ class TestGithubOrgClient(unittest.TestCase):
 
     @patch('client.get_json')
     def test_public_repos(self, mock_get_json):
-        """Test the public_repos method"""
+        """
+        Test the public_repos method works properly
+        """
 
         # Define the mocked payload returned by get_json
         mock_get_json.return_value = [
