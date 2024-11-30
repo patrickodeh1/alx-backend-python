@@ -1,39 +1,36 @@
+#!/usr/bin/env python3
+"""Test suite for the GithubOrgClient class"""
 import unittest
-from unittest.mock import patch
-
+from parameterized import parameterized
+from unittest.mock import patch, Mock
 from client import GithubOrgClient
 
 
 class TestGithubOrgClient(unittest.TestCase):
-    def test_public_repos(self):
-        """Test public_repos method with and without license filter"""
+    """Test suite for GithubOrgClient"""
 
-        # Mock get_json and repos_payload to avoid real API calls
-        with patch.object(GithubOrgClient, 'repos_payload') as mock_repos_payload:
-            # Define expected repos payload
-            expected_payload = [
-                {"name": "repo1", "license": {"key": "mit"}},
-                {"name": "repo2", "license": {"key": "apache-2.0"}},
-                {"name": "repo3", "license": None}
-            ]
+    @parameterized.expand([
+        ("google", {"repos_url": "https://api.github.com/orgs/google/repos"}),
+        ("abc", {"repos_url": "https://api.github.com/orgs/abc/repos"}),
+    ])
+    @patch('client.get_json', return_value={"repos_url": "mocked_repos_url"})
+    def test_org(self, org_name, expected_return, mock_get_json):
+        """Test that GithubOrgClient.org returns the correct value"""
 
-            # Set mock_repos_payload to return the expected data
-            mock_repos_payload.return_value = expected_payload
+        # Create an instance of GithubOrgClient
+        client = GithubOrgClient(org_name)
 
-            # Create an instance of GithubOrgClient
-            client = GithubOrgClient("some-org")
+        # Call the org property
+        result = client.org
 
-            # Test without license filter
-            all_repos = client.public_repos()
-            self.assertEqual(all_repos, ["repo1", "repo2"])
+        # Ensure get_json is called once with the correct URL
+        mock_get_json.assert_called_once_with(
+            f"https://api.github.com/orgs/{org_name}"
+        )
 
-            # Test with license filter
-            filtered_repos = client.public_repos(license="mit")
-            self.assertEqual(filtered_repos, ["repo1"])
-
-            # Verify that repos_payload was called once
-            mock_repos_payload.assert_called_once()
+        # Check that the org method returns the expected result
+        self.assertEqual(result, {"repos_url": "mocked_repos_url"})
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
