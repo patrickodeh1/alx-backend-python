@@ -39,28 +39,22 @@ class TestGetJson(unittest.TestCase):
     def test_get_json(self, mock_get):
         """Test that get_json returns the expected result"""
         
-        # Define test cases
         test_cases = [
             ("http://example.com", {"payload": True}),
             ("http://holberton.io", {"payload": False}),
         ]
         
         for test_url, test_payload in test_cases:
-            # Configure the mock to return the test payload
             mock_response = Mock()
             mock_response.json.return_value = test_payload
             mock_get.return_value = mock_response
 
-            # Call the function with the test URL
             result = get_json(test_url)
 
-            # Verify the mock was called exactly once with the correct arguments
             mock_get.assert_called_once_with(test_url)
 
-            # Assert that the function returns the expected result
             self.assertEqual(result, test_payload)
 
-            # Reset the mock for the next iteration
             mock_get.reset_mock()
 
 
